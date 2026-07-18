@@ -556,7 +556,8 @@ class Parser(object):
         else:
             # Construct the variable array
 
-            assert self.token == '='
+            if self.token != '=':
+                raise ValueError('Expected assignment token = after variable name.')
             n_vals = None
 
             self._update_tokens()
@@ -740,13 +741,15 @@ class Parser(object):
             v_re = self.token
 
             self._update_tokens(write_token)
-            assert self.token == ','
+            if self.token != ',':
+                raise ValueError('Complex value missing comma separator.')
 
             self._update_tokens(write_token)
             v_im = self.token
 
             self._update_tokens(write_token)
-            assert self.token == ')'
+            if self.token != ')':
+                raise ValueError('Complex value missing closing parenthesis.')
 
             self._update_tokens(write_token, override)
             v_str = '({0}, {1})'.format(v_re, v_im)

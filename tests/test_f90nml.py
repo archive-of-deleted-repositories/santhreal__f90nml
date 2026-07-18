@@ -1626,6 +1626,21 @@ class Test(unittest.TestCase):
         self.assertRaises(ValueError, f90nml.read, 'first_grp_no_end_dollar.nml')
 
 
+
+class TestMalformedComplex(unittest.TestCase):
+    def test_complex_missing_comma_raises_valueerror(self):
+        # Near-valid complex must not leak AssertionError.
+        with self.assertRaises(ValueError):
+            f90nml.reads('&x a=(1 2) /')
+        with self.assertRaises(ValueError):
+            f90nml.reads('&x a=(1,2 /')
+
+    def test_valid_complex_still_parses(self):
+        nml = f90nml.reads('&x a=(1, 2) /')
+        self.assertEqual(nml['x']['a'], 1+2j)
+
+
+
 if __name__ == '__main__':
     if os.path.isfile('tmp.nml'):
         os.remove('tmp.nml')
